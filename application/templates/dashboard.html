@@ -1,0 +1,139 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_expense"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="income_vs_category"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-10 col-sm-6 col-md-6">
+    <div class="card card-style mb-2">
+        <div class="card-body">
+            <div class="chart-container" style="position: relative;">
+                <canvas id="overtime_expenditure"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+<script>
+    let income_vs_expense_data = JSON.parse({{ income_vs_expense | tojson }})
+    let income_category_data = JSON.parse({{ income_category | tojson}})
+
+    Chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
+            }
+    });
+
+
+    let income_vs_expense_chart = new Chart(income_vs_expense, {
+            type: 'pie',
+            data: {
+            labels: ['expense', 'income'],
+                datasets: [{
+                    label: "Income Vs Expenses",
+                    data: income_vs_expense_data,
+                    backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                        '#B276B2', '#E16851', '#FB8267'],
+
+                    borderWidth: 1,
+                    hoverBorderColor: "black",
+                    hoverBorderWidth: 2,
+                    hoverBackgroundColor: 'rgba(154, 245, 140)',
+                    pointHoverRadius: 5
+                }],
+            },
+            options: {
+                    title: {
+                        display: true,
+                            text: "Income Vs Expenses",
+                                fontSize: 20,
+                    },
+                    legend: {
+                        position: "right",
+                            labels: {
+                            fontColor: "gray"
+                        },
+                        display: true,
+                    },
+
+                    elements: {
+                        hitRadius: 3,
+                    }
+            }
+        })
+
+    let income_vs_category_chart = new Chart(income_vs_category, {
+            type: 'bar',
+            data: {
+                labels: ['investment', 'rent', 'salary', 'side_hustle'],
+                datasets: [{
+                    label: "Categories Of Income",
+                    data: income_category_data,
+            backgroundColor: ['#5DA5DA ', '#FAA43A', '#60BD68',
+                '#B276B2', '#E16851', '#FB8267'],
+            borderWidth: 1,
+            hoverBorderColor: "black",
+            hoverBorderWidth: 2,
+            hoverBackgroundColor: 'rgba(154, 245, 140)',
+            pointHoverRadius: 5
+        }],
+            },
+        options: {
+                title: {
+                    display: true,
+                        text: "Income Categories",
+                            fontSize: 20,
+            },
+                legend: {
+                    position: "right",
+                        labels: {
+                        fontColor: "gray"
+                    },
+                    display: true,
+            },
+
+                elements: {
+                    hitRadius: 3,
+            }
+            }
+        })
+        over_time_expenditure = JSON.parse({{over_time_expenditure | tojson}})
+        labels = JSON.parse({{ dates_label  | tojson}})
+
+        new Chart(document.getElementById("overtime_expenditure"), {
+                type: "line",
+                data:
+                {
+                    labels: labels,
+                    datasets: [{
+                        label: "Expenditure Over Time",
+                        
+                        data: over_time_expenditure,
+                        fill: false,
+                        borderColor: "rgb(75, 192, 192)",
+                        lineTension: 0.1
+                    }]
+                },
+                options: {}
+            });
+</script>
+{% endblock%}
+
+{% endblock %}
